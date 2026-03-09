@@ -6,25 +6,27 @@ import fitz, re
 import os
 
 app = FastAPI(title='Text2Audio')
-VOICE = 'en-AU-NatashaNeural'  # Change here
+VOICE = 'ar-EG-SalmaNeural '  # Change here
 OUTPUT_DIR = 'audiobooks'
 os.makedirs(OUTPUT_DIR, exist_ok=True)
+async def generate_audio(text: str, output_file: str, subtitle_file: str):
 
-async def generate_audio(text: str, output_file: str, vtt_file: str):
-    try:
-        communicate = edge_tts.Communicate(text, VOICE)
-        submaker = edge_tts.SubMaker()
-        with open(output_file, "wb") as file:
-            async for chunk in communicate.stream():
-                if chunk["type"] == "audio":
-                    file.write(chunk["data"])
-                elif chunk["type"] == "WordBoundary":
-                    submaker.create_sub((chunk["offset"], chunk["duration"]), chunk["text"])
-        
-        with open(vtt_file, "w", encoding="utf-8") as file:
-            file.write(submaker.generate_subs())
-    except Exception as e:
-        print('Exception:', e)
+    communicate = edge_tts.Communicate(text, VOICE)
+    submaker = edge_tts.SubMaker()
+
+    with open(output_file, "wb") as audio:
+
+        async for chunk in communicate.stream():
+
+            if chunk["type"] == "audio":
+                audio.write(chunk["data"])
+
+            elif chunk["type"] in ("WordBoundary", "SentenceBoundary"):
+                submaker.feed(chunk)
+
+    with open(subtitle_file, "w", encoding="utf-8") as f:
+        f.write(submaker.get_srt())   
+ 
 
 def extract_text_from_pdf(pdf_path: str) -> str:
     text = ""
@@ -43,7 +45,7 @@ async def cleanup_file(file_name: str):
 async def convert_pdf_to_audio(file: UploadFile = File(...)):
     if file.filename == '':
         raise HTTPException(status_code=400, detail="No file selected")
-    pdf_path = 'temp_input.pdf'
+    pdf_path = 'temp.pdf'
     with open(pdf_path, 'wb') as f:
         content = await file.read()
         f.write(content)
