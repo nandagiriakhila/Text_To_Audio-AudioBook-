@@ -15,7 +15,7 @@ This project converts PDF files into audiobooks with synchronized subtitles in `
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/your-repo/Text2Audio-Subtitles.git
+   git clone https://github.com//Text2Audio-Subtitles.git
    cd Text2Audio-Subtitles
    ```
 
@@ -43,7 +43,7 @@ This project converts PDF files into audiobooks with synchronized subtitles in `
 
 ## Requirements
 
-- Python 3.8 or higher
+- Python 3.11 or higher
 - Dependencies listed in `requirements.txt`
 
 ## Acknowledgments
@@ -51,3 +51,4 @@ This project converts PDF files into audiobooks with synchronized subtitles in `
 - [FastAPI](https://fastapi.tiangolo.com/) for providing a modern web framework.
 - [Microsoft Edge TTS](https://learn.microsoft.com/en-us/azure/cognitive-services/speech-service/) for text-to-speech capabilities.
 - [PyMuPDF (fitz)](https://pymupdf.readthedocs.io/) for PDF text extraction.
+
